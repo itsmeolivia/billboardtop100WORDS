@@ -22,28 +22,14 @@ def lyricwikicase(s):
 	s = s.replace("}", ")")
 	return s
 
-def lyricwikiurl(artist, title, edit=False, fuzzy=False):
+def lyricwikiurl(artist, title):
 	"""Return the URL of a LyricWiki page for the given song, or its edit
 	page"""
 
-	if fuzzy:
-		base = "http://lyrics.wikia.com/index.php?search="
-		pagename = artist + ':' + title
-		if not edit:
-			url = base + pagename
-			doc = lxml.html.parse(url)
-			return doc.docinfo.URL
-	else:
-		base = "http://lyrics.wikia.com/"
-		pagename = lyricwikipagename(artist, title)
-	if edit:
-		if fuzzy:
-			url = base + pagename
-			doc = lxml.html.parse(url)
-			return doc.docinfo.URL + "&action=edit"
-		else:
-			return base + "index.php?title=%s&action=edit" % pagename
-	return base + pagename
+
+	base = "http://lyrics.wikia.com/index.php?search="
+	pagename = artist + ':' + title
+	return #url
 
 
 def getlyrics(artist, title, fuzzy=False):
