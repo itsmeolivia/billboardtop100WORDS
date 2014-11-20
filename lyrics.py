@@ -1,4 +1,4 @@
-import urllib, sys, os, re
+import re, requests
 from bs4 import BeautifulSoup
 
 def lyricwikicase(s):
@@ -22,20 +22,20 @@ def lyricwikicase(s):
 	s = s.replace("}", ")")
 	return s
 
-def lyricwikiurl(artist, title):
-	"""Return the URL of a LyricWiki page for the given song, or its edit
-	page"""
-
-
-	base = "http://lyrics.wikia.com/index.php?search="
-	pagename = artist + ':' + title
-	return #url
-
-
 def getlyrics(artist, title, fuzzy=False):
 	"""Get and return the lyrics for the given song.
 	Raises an IOError if the lyrics couldn't be found.
 	Raises an IndexError if there is no lyrics tag."""
+	
+	base = "http://lyrics.wikia.com/"
+	page = artist + ':' + title
+	
+	soup = BeautifulSoup(requests.get(base + page).text)
+	rawLyrics = soup.select("lyricsbox")
+
+	song = []
+	for line in rawLyrics:
+		song.append(line.find("br"))
 
 	try:
 		#getting lyrics
