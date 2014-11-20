@@ -1,9 +1,5 @@
-import urllib
-import sys
-import os
-import re
-import subprocess
-import lxml.html
+import urllib, sys, os, re
+from bs4 import BeautifulSoup
 
 def lyricwikicase(s):
 	"""Return a string in LyricWiki case.
@@ -24,14 +20,7 @@ def lyricwikicase(s):
 	s = s.replace("]", ")")
 	s = s.replace("{", "(")
 	s = s.replace("}", ")")
-	s = urllib.urlencode([(0, s)])[2:]
 	return s
-
-def lyricwikipagename(artist, title):
-	"""Return the page name for a set of lyrics given the artist and
-	title"""
-
-	return "%s:%s" % (lyricwikicase(artist), lyricwikicase(title))
 
 def lyricwikiurl(artist, title, edit=False, fuzzy=False):
 	"""Return the URL of a LyricWiki page for the given song, or its edit
@@ -56,74 +45,21 @@ def lyricwikiurl(artist, title, edit=False, fuzzy=False):
 			return base + "index.php?title=%s&action=edit" % pagename
 	return base + pagename
 
-def __executableexists(program):
-	"""Determine whether an executable exists"""
-
-	for path in os.environ["PATH"].split(os.pathsep):
-		exefile = os.path.join(path, program)
-		if os.path.exists(exefile) and os.access(exefile, os.X_OK):
-			return True
-	return False
-
-def currentlyplaying():
-	"""Return a tuple (artist, title) if there is a currently playing song in
-	MPD or Rhythmbox, otherwise None.
-	Raise an OSError if no means to get the currently playing song exist."""
-
-	artist = None
-	title = None
-
-	mpc = __executableexists("mpc")
-	rhythmbox = __executableexists("rhythmbox-client")
-
-	if not mpc and not rhythmbox:
-		raise OSError("neither mpc nor rhythmbox-client are available")
-
-	if mpc:
-		output = subprocess.Popen(["mpc", "--format", "%artist%\\n%title%"],
-				stdout=subprocess.PIPE).communicate()[0].split("\n")
-		if not output[0].startswith("volume: "):
-			(artist, title) = output[0:2]
-
-	if artist is None and rhythmbox:
-		output = subprocess.Popen(
-				["rhythmbox-client", "--no-start", "--print-playing",
-						"--print-playing-format=%ta\n%tt"],
-				stdout=subprocess.PIPE).communicate()[0]
-		if len(output) > 0 and output != "Not playing\n":
-			(artist, title) = output.split("\n")[0:2]
-
-	if artist is None or title is None:
-		return None
-	return (artist, title)
 
 def getlyrics(artist, title, fuzzy=False):
 	"""Get and return the lyrics for the given song.
 	Raises an IOError if the lyrics couldn't be found.
-	Raises an IndexError if there is no lyrics tag.
-	Returns False if there are no lyrics (it's instrumental)."""
+	Raises an IndexError if there is no lyrics tag."""
 
 	try:
-		doc = lxml.html.parse(lyricwikiurl(artist, title, fuzzy=fuzzy))
+		#getting lyrics
 	except IOError:
 		raise
 
 	try:
-		lyricbox = doc.getroot().cssselect(".lyricbox")[0]
+		#parsing for them
 	except IndexError:
 		raise
 
-	# look for a sign that it's instrumental
-	if len(doc.getroot().cssselect(".lyricbox a[title=\"Instrumental\"]")):
-		return False
-
 	# prepare output
 	lyrics = []
-	if lyricbox.text is not None:
-		lyrics.append(lyricbox.text)
-	for node in lyricbox:
-		if str(node.tag).lower() == "br":
-			lyrics.append("\n")
-		if node.tail is not None:
-			lyrics.append(node.tail)
-	return "".join(lyrics).strip()
