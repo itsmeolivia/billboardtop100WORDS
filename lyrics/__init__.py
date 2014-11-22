@@ -1,7 +1,7 @@
 import re, requests
 from bs4 import BeautifulSoup
 
-def lyricwikicase(s):
+def wikicase(s):
 	"""Return a string in LyricWiki case.
 	Substitutions are performed as described at
 	<http://lyrics.wikia.com/LyricWiki:Page_Names>.
@@ -26,10 +26,10 @@ def getlyrics(artist, title, fuzzy=False):
 	"""Get and return the lyrics for the given song.
 	Raises an IOError if the lyrics couldn't be found.
 	Raises an IndexError if there is no lyrics tag."""
-	
+
 	base = "http://lyrics.wikia.com/"
 	page = artist + ':' + title
-	
+
 	soup = BeautifulSoup(requests.get(base + page).text)
 	rawLyrics = soup.select("lyricsbox")
 
