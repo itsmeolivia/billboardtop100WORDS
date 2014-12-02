@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 from collections import namedtuple
-import requests, lyrics
+from lyrics import wikicase
+import requests
 
 soup = BeautifulSoup(requests.get("http://www.billboard.com/charts/hot-100").text)
 
@@ -9,7 +10,13 @@ rawRows = soup.select(".row-title")
 songs = []
 
 for row in rawRows:
-    title = wikicase(row.find("h2").text.strip())
-    artiste = wikicase(row.find("a").text.strip())
+    #title =
 
-    songs.append((title, artiste))
+    title = row.find("h2").text.strip()
+    artiste =  (row.find("h3").text.strip())
+
+    if "Featuring" in artiste:
+        artiste = artiste[0:artiste.find("Feat") - 1]
+        print artiste
+
+    #songs.append((title, artiste))

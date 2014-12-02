@@ -37,15 +37,15 @@ def getlyrics(artist, title, fuzzy=False):
 	for line in rawLyrics:
 		song.append(line.find("br"))
 
-	try:
+	#try:
 		#getting lyrics
-	except IOError:
-		raise
+	#except IOError:
+	#	raise
 
-	try:
+	#try:
 		#parsing for them
-	except IndexError:
-		raise
+	#except IndexError:
+	#	raise
 
 	# prepare output
 	lyrics = []
