@@ -22,7 +22,7 @@ def wikicase(s):
 	s = s.replace("}", ")")
 	return s
 
-def getlyrics(artist, title, fuzzy=False):
+def getlyrics(artist, title):
 	"""Get and return the lyrics for the given song.
 	Raises an IOError if the lyrics couldn't be found.
 	Raises an IndexError if there is no lyrics tag."""
@@ -31,21 +31,18 @@ def getlyrics(artist, title, fuzzy=False):
 	page = artist + ':' + title
 
 	soup = BeautifulSoup(requests.get(base + page).text)
-	rawLyrics = soup.select("lyricsbox")
 
-	song = []
-	for line in rawLyrics:
-		song.append(line.find("br"))
+	try:
+		rawLyrics = soup.select("lyricsbox")
+		
+	except IOError:
+		raise
 
-	#try:
-		#getting lyrics
-	#except IOError:
-	#	raise
+	try:
+		song = []
+		for line in rawLyrics:
+			song.append(line.find("br"))
+	except IndexError:
+		raise
 
-	#try:
-		#parsing for them
-	#except IndexError:
-	#	raise
-
-	# prepare output
 	lyrics = []
