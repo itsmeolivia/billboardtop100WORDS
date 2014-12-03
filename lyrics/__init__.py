@@ -30,19 +30,20 @@ def getlyrics(artist, title):
 	base = "http://lyrics.wikia.com/"
 	page = artist + ':' + title
 
-	soup = BeautifulSoup(requests.get(base + page).text)
+	
 
 	try:
-		rawLyrics = soup.select("lyricsbox")
-		
+		soup = BeautifulSoup(requests.get(base + page).text)	
 	except IOError:
 		raise
 
 	try:
-		song = []
-		for line in rawLyrics:
-			song.append(line.find("br"))
+		rawLyrics = soup.select("lyricsbox")
 	except IndexError:
 		raise
-
+	
 	lyrics = []
+	for line in rawLyrics:
+		lyrics.append(line.find("br"))
+
+	return lyrics
