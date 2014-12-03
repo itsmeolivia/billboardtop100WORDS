@@ -15,7 +15,7 @@ def wikicase(s):
 	s = "_".join(newwords)
 	s = s.replace("<", "Less_Than")
 	s = s.replace(">", "Greater_Than")
-	s = s.replace("#", "Number_") # FIXME: "Sharp" is also an allowed substitution
+	s = s.replace("#", "Number_")
 	s = s.replace("[", "(")
 	s = s.replace("]", ")")
 	s = s.replace("{", "(")
@@ -23,14 +23,12 @@ def wikicase(s):
 	return s
 
 def getlyrics(artist, title):
-	"""Get and return the lyrics for the given song.
-	Raises an IOError if the lyrics couldn't be found.
-	Raises an IndexError if there is no lyrics tag."""
+	"""Raises an IOError if the lyrics couldn't be found.
+	 Raises an IndexError if there is no lyrics tag."""
 
 	base = "http://lyrics.wikia.com/"
 	page = artist + ':' + title
 
-	
 
 	try:
 		soup = BeautifulSoup(requests.get(base + page).text)	
