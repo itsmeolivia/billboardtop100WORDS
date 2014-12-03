@@ -12,11 +12,11 @@ songs = []
 for row in rawRows:
     #title =
 
-    title = row.find("h2").text.strip()
+    title = wikicase(row.find("h2").text.strip())
     artiste =  (row.find("h3").text.strip())
 
     if "Featuring" in artiste:
         artiste = artiste[0:artiste.find("Feat") - 1]
-        print artiste
-
-    #songs.append((title, artiste))
+    artiste = wikicase(artiste)
+    
+    songs.append((title, artiste))
