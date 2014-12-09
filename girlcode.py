@@ -3,33 +3,49 @@ from collections import namedtuple
 from lyrics import wikicase, getlyrics
 import requests
 
-soup = BeautifulSoup(requests.get("http://www.billboard.com/charts/hot-100").text)
+def strip(word):
+    result = ""
+    for i in word:
+        if i not in ".?,\"'-&#1234567890@()*:;[]{}<>$%^=+/\\|\n":
+            result += i
+    return result
 
-rawRows = soup.select(".row-title")
+def wordCount(string):
+    word_count = {}
+    line = strip(string)
+    for word in line:
+        if word not in word_count:
+            word_count[i] = 0
+        word_count[i] += 1
+    return word_count
 
-songs = []
+if __name__ == "__main__":
+    soup = BeautifulSoup(requests.get("http://www.billboard.com/charts/hot-100").text)
 
-for row in rawRows:
+    rawRows = soup.select(".row-title")
 
-    title = wikicase(row.find("h2").text.strip())
-    artiste =  (row.find("h3").text.strip())
+    songs = []
 
-    if "Featuring" in artiste:
-        artiste = artiste[0:artiste.find("Feat") - 1]
-        #TODO: the lyricsbox has [] indicating who is speaking.  I dont want that to be considered a lyric, going to have to strip
-    artiste = wikicase(artiste)
-    
-    songs.append((title, artiste))
+    for row in rawRows:
+
+        title = wikicase(row.find("h2").text.strip())
+        artiste =  (row.find("h3").text.strip())
+
+        if "Featuring" in artiste:
+            artiste = artiste[0:artiste.find("Featuring") - 1]
+            #TODO: the lyricsbox has [] indicating who is speaking.  I dont want that to be considered a lyric, going to have to strip
+            artiste = wikicase(artiste)
+            songs.append(title, artiste)
 
 
 
-vocabulary = [] #hashmap of word, number of appearances
-vocab_stemmed = []
+        vocabulary = {} #hashmap of word, number of appearances
+        vocab_stemmed = {}
 
-stopWords = [] #fill in l8r
+        stopWords = [] #fill in l8r
 
-for title, artiste in songs:
-	lyrics = getlyrics(artiste, title)
+        for title, artiste in songs:
+            lyrics = getlyrics(artiste, title)
 
-	for word in lyrics:
-		if word not in stopWords:
+	    for word in lyrics:
+            if word not in stopWords
