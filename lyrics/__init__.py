@@ -20,6 +20,8 @@ def wikicase(s):
 	s = s.replace("]", ")")
 	s = s.replace("{", "(")
 	s = s.replace("}", ")")
+
+	s = s.replace("!", "")
 	return s
 
 def getlyrics(artist, title):
@@ -28,7 +30,10 @@ def getlyrics(artist, title):
 	page = artist + ':' + title
 
 	soup = BeautifulSoup(requests.get(base + page).text)
-	rawLyrics = soup.select(".lyricbox")[0]
+	try:
+		rawLyrics = soup.select(".lyricbox")[0]
+	except IndexError:
+		return "" #no lyrics to be found
 
 #	import pdb; pdb.set_trace()
 	lyrics = ""

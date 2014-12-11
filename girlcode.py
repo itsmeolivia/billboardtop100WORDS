@@ -1,7 +1,8 @@
+from textblob import Word, TextBlob
 from bs4 import BeautifulSoup
 from collections import namedtuple
 from lyrics import wikicase, getlyrics
-import requests
+import requests, operator
 
 def strip(word):
     result = ""
@@ -9,15 +10,6 @@ def strip(word):
         if i not in ".?,\"'-&#1234567890@()*:;[]{}<>$%^=+/\\|\n":
             result += i
     return result
-
-def wordCount(string):
-    word_count = {}
-    line = strip(string)
-    for word in line:
-        if word not in word_count:
-            word_count[i] = 0
-        word_count[i] += 1
-    return word_count
 
 if __name__ == "__main__":
     soup = BeautifulSoup(requests.get("http://www.billboard.com/charts/hot-100").text)
@@ -37,16 +29,15 @@ if __name__ == "__main__":
 
         songs.append((title, artiste))
 
-        vocabulary = {} #hashmap of word, number of appearances
-        vocab_stemmed = {}
-
-#        stopWords = [] #fill in l8r
+    vocabulary = {} #hashmap of word, number of appearances
 
     for title, artiste in songs:
         print title, artiste
         lyrics = getlyrics(artiste, title)
-        break
-    print lyrics
 
-#	    for word in lyrics:
-#            if word not in stopWords
+        for word in TextBlob(lyrics).words:
+            normalized = Word(word).lemmatize().lower()
+            if normalized not in vocabulary:
+                vocabulary[normalized] = 0
+            vocabulary[normalized] += 1
+    print vocabulary
