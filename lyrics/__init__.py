@@ -23,25 +23,16 @@ def wikicase(s):
 	return s
 
 def getlyrics(artist, title):
-	"""Raises an IOError if the lyrics couldn't be found.
-	 Raises an IndexError if there is no lyrics tag."""
 
 	base = "http://lyrics.wikia.com/"
 	page = artist + ':' + title
 
+	soup = BeautifulSoup(requests.get(base + page).text)
+	rawLyrics = soup.select(".lyricbox")[0]
 
-	try:
-		soup = BeautifulSoup(requests.get(base + page).text)	
-	except IOError:
-		raise
-
-	try:
-		rawLyrics = soup.select("lyricsbox")
-	except IndexError:
-		raise
-	
-	lyrics = []
-	for line in rawLyrics:
-		lyrics.append(line.find("br"))
-
-	return lyrics
+#	import pdb; pdb.set_trace()
+	lyrics = ""
+	for thing in rawLyrics.contents:
+		if isinstance(thing, unicode) and '[' not in thing and 'p>' not in thing:
+			lyrics += thing + " "
+	return lyrics.strip()

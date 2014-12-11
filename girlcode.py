@@ -33,19 +33,20 @@ if __name__ == "__main__":
 
         if "Featuring" in artiste:
             artiste = artiste[0:artiste.find("Featuring") - 1]
-            #TODO: the lyricsbox has [] indicating who is speaking.  I dont want that to be considered a lyric, going to have to strip
-            artiste = wikicase(artiste)
-            songs.append(title, artiste)
+        artiste = wikicase(artiste)
 
-
+        songs.append((title, artiste))
 
         vocabulary = {} #hashmap of word, number of appearances
         vocab_stemmed = {}
 
-        stopWords = [] #fill in l8r
+#        stopWords = [] #fill in l8r
 
-        for title, artiste in songs:
-            lyrics = getlyrics(artiste, title)
+    for title, artiste in songs:
+        print title, artiste
+        lyrics = getlyrics(artiste, title)
+        break
+    print lyrics
 
-	    for word in lyrics:
-            if word not in stopWords
+#	    for word in lyrics:
+#            if word not in stopWords
