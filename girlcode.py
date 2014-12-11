@@ -41,3 +41,4 @@ if __name__ == "__main__":
                 vocabulary[normalized] = 0
             vocabulary[normalized] += 1
     print vocabulary
+    #https://wiki.python.org/moin/PrintFails for reference l8r
