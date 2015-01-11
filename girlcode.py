@@ -39,6 +39,7 @@ if __name__ == "__main__":
             if normalized not in vocabulary:
                 vocabulary[normalized] = 0
             vocabulary[normalized] += 1
+            
     sorted_v = sorted(vocabulary.items(), key=operator.itemgetter(1))
 
     f = file('output.csv', 'w')
