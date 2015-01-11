@@ -31,6 +31,7 @@ if __name__ == "__main__":
 
     vocabulary = {} #hashmap of word, number of appearances
 
+    unordered_list = file('output.txt', 'w')
     for title, artiste in songs:
         lyrics = getlyrics(artiste, title)
 
@@ -39,7 +40,8 @@ if __name__ == "__main__":
             if normalized not in vocabulary:
                 vocabulary[normalized] = 0
             vocabulary[normalized] += 1
-            
+            unordered_list.write(word.encode('utf8') + '\n')
+
     sorted_v = sorted(vocabulary.items(), key=operator.itemgetter(1))
 
     f = file('output.csv', 'w')
