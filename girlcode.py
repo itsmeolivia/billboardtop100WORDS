@@ -11,27 +11,36 @@ def strip(word):
             result += i
     return result
 
+def getSongs(row):
+    title = wikicase(row.find("h2").text.strip())
+    artiste =  (row.find("h3").text.strip())
+
+    if "Featuring" in artiste:
+        artiste = artiste[0:artiste.find("Featuring") - 1]
+    artiste = wikicase(artiste)
+
+    return title, artiste
+
 if __name__ == "__main__":
-    soup = BeautifulSoup(requests.get("http://www.billboard.com/charts/hot-100").text)
 
-    rawRows = soup.select(".row-title")
+    soups = []
 
+    soup_page0 = BeautifulSoup(requests.get("http://www.billboard.com/charts/r-b-hip-hop-songs").text)
+    soup_page1 = BeautifulSoup(requests.get("http://www.billboard.com/charts/r-b-hip-hop-songs?page=1").text)
+    soup_page2 = BeautifulSoup(requests.get("http://www.billboard.com/charts/r-b-hip-hop-songs?page=2").text)
+
+    soups.extend([soup_page0, soup_page1, soup_page2])
     songs = []
 
-    for row in rawRows:
-
-        title = wikicase(row.find("h2").text.strip())
-        artiste =  (row.find("h3").text.strip())
-
-        if "Featuring" in artiste:
-            artiste = artiste[0:artiste.find("Featuring") - 1]
-        artiste = wikicase(artiste)
-
-        songs.append((title, artiste))
+    for soup in soups:
+        rawRows = soup.select(".row-title")
+        for row in rawRows:
+            title, artiste = getSongs(row)
+            songs.append((title, artiste))
 
     vocabulary = {} #hashmap of word, number of appearances
 
-    unordered_list = file('output.txt', 'w')
+    unordered_list = file('output_rb.txt', 'w')
     for title, artiste in songs:
         lyrics = getlyrics(artiste, title)
 
@@ -44,6 +53,6 @@ if __name__ == "__main__":
 
     sorted_v = sorted(vocabulary.items(), key=operator.itemgetter(1))
 
-    f = file('output.csv', 'w')
+    f = file('output_rb.csv', 'w')
     for word, count in sorted_v:
         f.write(word.encode('utf8') + "," + str(count) + "\n")
