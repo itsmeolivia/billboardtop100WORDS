@@ -11,15 +11,27 @@ def strip(word):
             result += i
     return result
 
+def stripFeaturedArtists(artist):
+    if "Featuring" in artist:
+        return artist[0:artist.find("Featuring") - 1]
+    else:
+        return artist
+
 def getSongs(row):
     title = wikicase(row.find("h2").text.strip())
     artiste =  (row.find("h3").text.strip())
 
-    if "Featuring" in artiste:
-        artiste = artiste[0:artiste.find("Featuring") - 1]
-    artiste = wikicase(artiste)
+    artiste = wikicase(stripFeaturedArtists(artiste))
 
     return title, artiste
+
+def getRnBSongs(headerTag):
+    title = wikicase(headerTag.find("h1").text.strip())
+    artist = headerTag.select(".chart_info a")[0].text.strip()
+
+    artist = wikicase(stripFeaturedArtists(artist))
+
+    return title, artist
 
 if __name__ == "__main__":
 
@@ -33,9 +45,9 @@ if __name__ == "__main__":
     songs = []
 
     for soup in soups:
-        rawRows = soup.select(".row-title")
+        rawRows = soup.select(".song_review header")
         for row in rawRows:
-            title, artiste = getSongs(row)
+            title, artiste = getRnBSongs(row)
             songs.append((title, artiste))
 
     vocabulary = {} #hashmap of word, number of appearances
