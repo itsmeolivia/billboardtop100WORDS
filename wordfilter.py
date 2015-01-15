@@ -1,6 +1,6 @@
 from sys import argv
 
-f = file('updated_output.txt', 'w')
+f = file('updated_outputChr.txt', 'w')
 
 for word in open(argv[1]):
     word = word.strip().lower()

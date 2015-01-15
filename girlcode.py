@@ -19,11 +19,11 @@ def stripFeaturedArtists(artist):
 
 def getSongs(row):
     title = wikicase(row.find("h2").text.strip())
-    artiste =  (row.find("h3").text.strip())
+    artist =  (row.find("h3").text.strip())
 
-    artiste = wikicase(stripFeaturedArtists(artiste))
+    artist = wikicase(stripFeaturedArtists(artist))
 
-    return title, artiste
+    return title, artist
 
 def getRnBSongs(headerTag):
     title = wikicase(headerTag.find("h1").text.strip())
@@ -37,9 +37,9 @@ if __name__ == "__main__":
 
     soups = []
 
-    soup_page0 = BeautifulSoup(requests.get("http://www.billboard.com/charts/r-b-hip-hop-songs").text)
-    soup_page1 = BeautifulSoup(requests.get("http://www.billboard.com/charts/r-b-hip-hop-songs?page=1").text)
-    soup_page2 = BeautifulSoup(requests.get("http://www.billboard.com/charts/r-b-hip-hop-songs?page=2").text)
+    soup_page0 = BeautifulSoup(requests.get("http://www.billboard.com/charts/christian-songs").text)
+    soup_page1 = BeautifulSoup(requests.get("http://www.billboard.com/charts/christian-songs?page=1").text)
+    soup_page2 = BeautifulSoup(requests.get("http://www.billboard.com/charts/christian-songs?page=2").text)
 
     soups.extend([soup_page0, soup_page1, soup_page2])
     songs = []
@@ -47,14 +47,14 @@ if __name__ == "__main__":
     for soup in soups:
         rawRows = soup.select(".song_review header")
         for row in rawRows:
-            title, artiste = getRnBSongs(row)
-            songs.append((title, artiste))
+            title, artist = getRnBSongs(row)
+            songs.append((title, artist))
 
     vocabulary = {} #hashmap of word, number of appearances
 
-    unordered_list = file('output_rb.txt', 'w')
-    for title, artiste in songs:
-        lyrics = getlyrics(artiste, title)
+    unordered_list = file('output_chr.txt', 'w')
+    for title, artist in songs:
+        lyrics = getlyrics(artist, title)
 
         for word in TextBlob(lyrics).words:
             normalized = Word(word).lemmatize().lower()
@@ -65,6 +65,6 @@ if __name__ == "__main__":
 
     sorted_v = sorted(vocabulary.items(), key=operator.itemgetter(1))
 
-    f = file('output_rb.csv', 'w')
+    f = file('output_chr.csv', 'w')
     for word, count in sorted_v:
         f.write(word.encode('utf8') + "," + str(count) + "\n")
